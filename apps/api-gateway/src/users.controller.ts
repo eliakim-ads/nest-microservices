@@ -1,79 +1,39 @@
-import {
-  BadRequestException,
-  Controller,
-  GatewayTimeoutException,
-  Get,
-  Inject,
-  NotFoundException,
-  Param,
-  ParseIntPipe,
-  ServiceUnavailableException,
-} from '@nestjs/common';
+import {  Body,  Controller,  Delete,  Get,  Inject,  Param,  ParseIntPipe,  Patch,  Post,} from '@nestjs/common';
 import { ClientProxy } from '@nestjs/microservices';
-import { firstValueFrom, timeout, TimeoutError } from 'rxjs';
-
-interface User {
-  id: number;
-  name: string;
-}
+import { CreateUserDto, UpdateUserDto } from '@app/contracts';
 
 @Controller('users')
 export class UsersController {
   constructor(
-    @Inject('USERS_SERVICE') private readonly usersClient: ClientProxy,
+    @Inject('USERS_SERVICE')
+    private readonly client: ClientProxy,
   ) {}
+
+  @Post()
+  create(@Body() dto: CreateUserDto) {
+    return this.client.send('users.create', dto);
+  }
 
   @Get()
   findAll() {
-    return this.request<User[]>('users.findAll', {});
+    return this.client.send('users.findAll', {});
   }
 
   @Get(':id')
-  async findOne(@Param('id', ParseIntPipe) id: number) {
-    if (id < 1 || id > 2_147_483_647) {
-      throw new BadRequestException(
-        'Informe um ID inteiro entre 1 e 2147483647.',
-      );
-    }
-
-    const user = await this.request<User | null>('users.findOne', id);
-    if (user === null) {
-      throw new NotFoundException('Usuário não encontrado.');
-    }
-    return user;
+  findOne(@Param('id', ParseIntPipe) id: number) {
+    return this.client.send('users.findOne', id);
   }
 
-  // Limita a espera pela resposta TCP e traduz falhas de conexão para HTTP.
-  private async request<T>(
-    pattern: string,
-    payload: object | number,
-  ): Promise<T> {
-    try {
-      return await firstValueFrom(
-        this.usersClient.send<T>(pattern, payload).pipe(timeout(5000)),
-      );
-    } catch (error) {
-      if (error instanceof TimeoutError) {
-        throw new GatewayTimeoutException(
-          'O serviço de usuários demorou para responder.',
-        );
-      }
-      if (
-        error instanceof Error &&
-        'code' in error &&
-        [
-          'ECONNREFUSED',
-          'ECONNRESET',
-          'EHOSTUNREACH',
-          'ENETUNREACH',
-          'ENOTFOUND',
-        ].includes(String(error.code))
-      ) {
-        throw new ServiceUnavailableException(
-          'Serviço de usuários indisponível.',
-        );
-      }
-      throw error;
-    }
+  @Patch(':id')
+  update(@Param('id', ParseIntPipe) id: number, @Body() dto: UpdateUserDto) {
+    return this.client.send('users.update', {
+      id,
+      data: dto,
+    });
+  }
+
+  @Delete(':id')
+  remove(@Param('id', ParseIntPipe) id: number) {
+    return this.client.send('users.remove', id);
   }
 }

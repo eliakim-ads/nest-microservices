@@ -1,6 +1,6 @@
 import { Injectable, OnModuleDestroy, OnModuleInit } from '@nestjs/common';
 import { PrismaPg } from '@prisma/adapter-pg';
-import { PrismaClient } from './generated/prisma/client';
+import { PrismaClient } from '../../../generated/users/client';
 
 @Injectable()
 export class PrismaService
@@ -8,14 +8,15 @@ export class PrismaService
   implements OnModuleInit, OnModuleDestroy
 {
   constructor() {
-    const connectionString = process.env.DATABASE_URL;
+    const connectionString = process.env.USERS_DATABASE_URL;
     if (!connectionString) {
-      throw new Error('Configure DATABASE_URL para iniciar o Users Service.');
+      throw new Error(
+        'Configure USERS_DATABASE_URL para iniciar o Users Service.',
+      );
     }
     super({ adapter: new PrismaPg({ connectionString }) });
   }
 
-  // O Nest gerencia o ciclo de vida do cliente junto com o microserviço.
   async onModuleInit() {
     await this.$connect();
   }

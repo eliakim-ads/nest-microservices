@@ -1,12 +1,18 @@
 import { Controller } from '@nestjs/common';
 import { MessagePattern, Payload } from '@nestjs/microservices';
+
 import { UsersService } from './users.service';
+import { CreateUserDto, UpdateUserDto } from '@app/contracts';
 
 @Controller()
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
-  // Cada padrão associa uma mensagem TCP a uma consulta.
+  @MessagePattern('users.create')
+  create(@Payload() data: CreateUserDto) {
+    return this.usersService.create(data);
+  }
+
   @MessagePattern('users.findAll')
   findAll() {
     return this.usersService.findAll();
@@ -15,5 +21,21 @@ export class UsersController {
   @MessagePattern('users.findOne')
   findOne(@Payload() id: number) {
     return this.usersService.findOne(id);
+  }
+
+  @MessagePattern('users.update')
+  update(
+    @Payload()
+    payload: {
+      id: number;
+      data: UpdateUserDto;
+    },
+  ) {
+    return this.usersService.update(payload.id, payload.data);
+  }
+
+  @MessagePattern('users.remove')
+  remove(@Payload() id: number) {
+    return this.usersService.remove(id);
   }
 }

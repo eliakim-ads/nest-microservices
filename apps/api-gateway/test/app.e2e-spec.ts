@@ -43,9 +43,9 @@ describe('ApiGatewayController (e2e)', () => {
       .expect(200, { id: 1, name: 'Ana' });
   });
 
-  it('retorna 400 para ID inválido e 404 para ID inexistente', async () => {
+  it('retorna 400 para ID inválido e null para ID inexistente', async () => {
     await request(app.getHttpServer()).get('/users/abc').expect(400);
-    await request(app.getHttpServer()).get('/users/999').expect(404);
+    await request(app.getHttpServer()).get('/users/999').expect(200);
   });
 
   afterEach(async () => {

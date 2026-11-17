@@ -45,7 +45,7 @@ describe('UsersController (e2e)', () => {
     ).resolves.toEqual([{ id: 1, name: 'Ana' }]);
     await expect(
       firstValueFrom(client.send('users.findOne', 999).pipe(timeout(3000))),
-    ).resolves.toBeNull();
+    ).rejects.toMatchObject({ message: 'Usuário não encontrado.' });
   });
 
   afterEach(async () => {
