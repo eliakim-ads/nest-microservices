@@ -1,0 +1,57 @@
+# Dependências e caches locais
+node_modules/
+/.npm/
+/.pnpm-store/
+/.yarn/unplugged/
+/.yarn/install-state.gz
+/.cache/
+
+# Compilação e cliente gerado pelo Prisma
+/dist/
+/build/
+/apps/users/src/generated/
+*.tsbuildinfo
+
+# Cobertura de testes e relatórios
+/coverage/
+/.nyc_output/
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+report.[0-9]*.[0-9]*.[0-9]*.[0-9]*.json
+
+# Variáveis de ambiente e credenciais locais
+.env
+.env.*
+!.env.example
+!.env.*.example
+
+# Configurações locais de IDEs
+/.vscode/
+/.idea/
+.project
+.classpath
+.c9/
+.settings/
+*.launch
+*.sublime-workspace
+
+# Arquivos temporários e de execução
+.temp/
+.tmp/
+tmp/
+*.tmp
+*.swp
+*~
+pids/
+*.pid
+*.pid.lock
+
+# Metadados do sistema operacional
+.DS_Store
+Thumbs.db
+Desktop.ini
