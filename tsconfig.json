@@ -46,6 +46,9 @@
       "path": "./apps/orders/tsconfig.app.json"
     },
     {
+      "path": "./apps/notifications/tsconfig.app.json"
+    },
+    {
       "path": "./tsconfig.spec.json"
     }
   ]
